@@ -39,8 +39,12 @@ public:
   DNS_WORKER();
   ~DNS_WORKER();
 
+  rval *read_name(u_char *buffer);
+
 private:
   // values
+  u_char *recv_buffer;
+  u_char recv_buffer_size;
   struct DNS *dns;
   std::thread thr_send;
   std::thread thr_recv;
@@ -49,10 +53,9 @@ private:
   void send_dns();
   void recv_dns();
   // parse functions
-  void parse_answer(u_char *, int len);
-  rval *read_name(u_char *buffer, u_char *buff);
+  void parse_answer();
   u_char *read_rdata(u_char *buffer, u_char &len);
-  struct RES_RECORD *parse_RR(u_char *q, u_char *buff, int len);
+  struct RES_RECORD *parse_RR(u_char *q);
   // print function
   void print_rr(struct RES_RECORD *);
   void print_dns_header(struct DNS_HEADER *);
@@ -254,8 +257,8 @@ enum class Query_Class : unsigned short {
 ////
 //
 struct QUESTION {
-  unsigned short qtype;
-  unsigned short qclass;
+  Query_TYPE qtype;
+  Query_Class qclass;
 };
 //
 ////
